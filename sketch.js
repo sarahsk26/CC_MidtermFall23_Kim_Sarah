@@ -25,6 +25,8 @@ let rains= [];
 let clouds=[];
 let trees=[];
 let waves=[];
+let moon;
+let sun;
 
 
 function setup(){ // SETUP FUNCTION
@@ -57,9 +59,7 @@ for(let i=0; i<2000; i++){ // wave blood cell
  
   let x= random(10);
   let y= random(height/2-50,height/2+50);
- let w = random(6);
-  let h = random(9);
-  let www= new Wave(x,y,w,h);
+  let www= new Wave(x,y);
 
   waves.push(www);
 
@@ -67,12 +67,18 @@ for(let i=0; i<2000; i++){ // wave blood cell
  
   mover= new Mover(); // vector instance 
   
+  moon= new Moon();
+  
+  sun= new Sun();
+  
   
 }
   
 
+//DRAW 
 
-function draw(){ // DRAW LOOP
+
+function draw(){ //BEGINNING OF THE DRAW LOOP FUNCTION 
   
   let b= random(30); // background color (left half)
   background(b);
@@ -81,33 +87,6 @@ function draw(){ // DRAW LOOP
   fill(179, 209, 252);
   noStroke();
   rect(width/2,0,width/2,height);
-  
-
-  ellipseMode(CENTER); 
-  
-let d= random(220,230); // this is the moon (night)
-fill(d+10,d+5,d-10,d); 
-  ellipse(width/4, height/3, 40,40); // the moon 
-fill(d-40,d-45,d-50,d-160);  
-  ellipse(width/4+8, height/3-2, 15,15); // crators 
-  ellipse(width/4-2, height/3+15, 7,7);
-  ellipse(width/4-5, height/3-5, 12,12);
-  ellipse(width/4-12, height/3+5, 10,10);
-  ellipse(width/4-2, height/3-12, 5,5);
-  ellipse(width/4, height/3-15, 6,6);
-  
-  
-let u= random(250,255); // this is the sun (day)
-  fill(u)
-  let a= random(5,10);  // glow around sun 
-  stroke(255,a);
-  strokeWeight(8);
-  
-  
-  let ex=width*3/4;
-  let ey=height*2/3
-  ellipse(ex,ey,40,40);
-  
   
   
   
@@ -142,21 +121,32 @@ let u= random(250,255); // this is the sun (day)
   trees[i].treecells()// cells
   }
   
-  for(var i=0; i<waves.length;i++){
-    waves[i].exist(); // functions waves exist 
-    waves[i].move();
-  }  
-  
   
   ellipseMode(CENTER);
 
-let gravity = createVector(0,0.1); // vector instance 
-  mover.applyForce(gravity);
-  
+let gravity = createVector(0,0.1); // vector instance for the middle mover gravity ball 
+  mover.applyForce(gravity); 
   mover.display();
   mover.checkEdges();
   mover.update();
   
+// vector instance for the moon movement 
+moon.applyForce(gravity);
+moon.display();
+moon.checkEdges();
+moon.update();
+  
+//vector instance for the sun movement 
+sun.applyForce(gravity);
+sun.display();
+sun.checkEdges();
+sun.update();
+ 
+  
+ for(var i=0; i<waves.length;i++){
+    waves[i].exist(); // functions waves exist 
+    waves[i].move();
+  }  
     
  eye();  
 }
@@ -433,20 +423,18 @@ stroke(mouseX*2/5,5);
 
 class Wave{ // WAVE CLASS AND QUALITIES
   
-  constructor(x,y,ww,hh){
+  constructor(x,y){
     this.x=x;
     this.y=y;
-    this.ww=ww;
-    this.hh=hh;  
     
   }
   
 exist(){
   
-  fill(210, 41, 41,200);
-  noStroke();
-  ellipse(this.x,this.y,this.ww,this.hh); // waves as single ellipses 
-  
+   fill(210, 41, 41,200);
+    ellipse(this.x,this.y,3,6);  
+      fill(255, 122, 102);
+     ellipse(this.x,this.y,2,2);
 }
   
   move(){ // ellipses moving to create wave/ water/ flow illusion 
@@ -486,10 +474,11 @@ class Mover{  // MOVER CLASS AND QUALITIES (BALL)--> GRAVITY
   
   constructor(){ //ball 
     
+    
     this.position= new createVector(width/2,30); // spefici coordinates
     this.velocity= new createVector(0,0);
     this.acceleration= new createVector(0,0);
-    this.mass= 1;
+    this.mass= 2;
   }
   
   
@@ -525,6 +514,112 @@ if(this.position.y> width){
 } else if(this.position.x<0){
   this.position.y=0;// stop at ground
  this.velocity.y*=-1;
+} 
+} // end of check edges method
+  
+}// end of class 
+
+
+
+
+
+
+class Moon{ 
+  
+  constructor(){ //ball 
+    
+    this.position= new createVector(width/4,30); // spefici coordinates
+    this.velocity= new createVector(0,0);
+    this.acceleration= new createVector(0,0);
+    this.mass= 1;
+  }
+  
+  
+update (){ // key to movement (adding speed/ velocity to position of vector )
+  this.velocity.add(this.acceleration); // slowly adding accerlation to the velocty
+  this.position.add(this.velocity);   // and velocity gets added to the position 
+  this.acceleration.mult(0); //cancels the velocity out--> to 0.
+}
+  
+  applyForce (force){ // pass in a vector
+    let f = p5.Vector.div(force,this.mass); //new vector 
+    this.acceleration.add(f);// add the new vector to the acceleration 
+    
+    
+  }
+
+  
+display(){
+  let d= random(220,230); // this is the moon (night)
+fill(d+10,d+5,d-10,d); 
+  ellipse(this.position.x,this.position.y, 50,50 );
+fill(d-50,d-55,d-60,d-170);  
+  ellipse(this.position.x,this.position.y, 15,15); // crators 
+  ellipse(this.position.x,this.position.y, 7,7);
+  ellipse(this.position.x,this.position.y, 12,12);
+  ellipse(this.position.x,this.position.y, 10,10);
+  ellipse(this.position.x,this.position.y, 5,5);
+  ellipse(this.position.x,this.position.y, 6,6);
+}
+  
+  
+checkEdges(){ // keeps ball on the screen
+  
+if(this.position.y> width){
+  this.position.y=0;
+    this.velocity.y /=2;
+} 
+} // end of check edges method
+  
+}// end of class 
+
+
+
+
+
+
+
+
+class Sun{ 
+  
+  constructor(){ //ball 
+    
+    this.position= new createVector(width*3/4,height-30); // spefici coordinates
+    this.velocity= new createVector(0,0);
+    this.acceleration= new createVector(0,0);
+    this.mass= -1;
+  }
+  
+  
+update (){ // key to movement (adding speed/ velocity to position of vector )
+  this.velocity.add(this.acceleration); // slowly adding accerlation to the velocty
+  this.position.add(this.velocity);   // and velocity gets added to the position 
+  this.acceleration.mult(0); //cancels the velocity out--> to 0.
+}
+  
+  applyForce (force){ // pass in a vector
+    let f = p5.Vector.div(force,this.mass); //new vector 
+    this.acceleration.add(f);// add the new vector to the acceleration 
+    
+    
+  }
+
+  
+display(){
+ let u= random(250,255); // this is the sun (day)
+  fill(u)
+  let a= random(5,10);  // glow around sun 
+  stroke(255,a);
+  strokeWeight(8);
+  ellipse(this.position.x,this.position.y,50,50);
+}
+  
+  
+checkEdges(){ // keeps ball on the screen
+  
+if(this.position.y<0){
+  this.position.y=height;
+    this.velocity.y /=2;
 } 
 } // end of check edges method
   

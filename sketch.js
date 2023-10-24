@@ -29,6 +29,7 @@ let moon;
 let sun;
 
 
+
 function setup(){ // SETUP FUNCTION
   createCanvas(800,800);
   
@@ -57,8 +58,8 @@ let t= new Tree(width/2,height);
  
 for(let i=0; i<2000; i++){ // wave blood cell
  
-  let x= random(10);
-  let y= random(height/2-50,height/2+50);
+  let x= random(5);
+  let y= random(height/2-2,height/2+2);
   let www= new Wave(x,y);
 
   waves.push(www);
@@ -84,6 +85,8 @@ function draw(){ //BEGINNING OF THE DRAW LOOP FUNCTION
   background(b);
   
    // background color (right half)
+  
+  
   fill(179, 209, 252);
   noStroke();
   rect(width/2,0,width/2,height);
@@ -430,8 +433,13 @@ class Wave{ // WAVE CLASS AND QUALITIES
   }
   
 exist(){
-  
-   fill(210, 41, 41,200);
+let r= random(135,150);
+  let g =random(25,35);
+  let b= random(15,30);
+  let f= random(200,240);
+  let fa= random(70,100);
+  fill(r,g,b,f);
+  noStroke();
     ellipse(this.x,this.y,3,6);  
       fill(255, 122, 102);
      ellipse(this.x,this.y,2,2);
@@ -439,7 +447,7 @@ exist(){
   
   move(){ // ellipses moving to create wave/ water/ flow illusion 
     
-   this.x= this.x+random(-5,10);
+   this.x= this.x+random(-10,17);
     this.y= this.y+random(-15,15);
     
   if(this.x>width){ // framing for the red wave blood cells 
@@ -454,7 +462,7 @@ exist(){
     this.y=random(-20,height+20);
     this.x=0;
   }
-    if (this.x<-20){
+    if (this.x<-40){
       this.x=0;
       this.y=random(-20,height+20);
        
@@ -498,11 +506,18 @@ update (){ // key to movement (adding speed/ velocity to position of vector )
   
 display(){
   
-  let f= random(50);
- noStroke();
-  fill(f, f, f,f+240);
+ let r= random(105,120);
+  let g =random(5,15);
+  let b= random(5,10);
 
-  ellipse(this.position.x,this.position.y, 40,40 );
+ stroke(r-10,g-10,b-10);
+  fill(r,g,b,this.position.y/2.5);
+
+ellipse(this.position.x,this.position.y,4000,4000);
+  
+  fill(0,this.position.y/2);
+  noStroke();
+  ellipse(this.position.x,this.position.y,30,30);
 }
   
   
@@ -550,6 +565,7 @@ update (){ // key to movement (adding speed/ velocity to position of vector )
 
   
 display(){
+  noStroke();
   let d= random(220,230); // this is the moon (night)
 fill(d+10,d+5,d-10,d); 
   ellipse(this.position.x,this.position.y, 50,50 );
@@ -612,8 +628,7 @@ display(){
   stroke(255,a);
   strokeWeight(8);
   ellipse(this.position.x,this.position.y,50,50);
-}
-  
+}  
   
 checkEdges(){ // keeps ball on the screen
   

@@ -486,7 +486,7 @@ class Mover{  // MOVER CLASS AND QUALITIES (BALL)--> GRAVITY
     this.position= new createVector(width/2,30); // spefici coordinates
     this.velocity= new createVector(0,0);
     this.acceleration= new createVector(0,0);
-    this.mass= 2;
+    this.mass= 1;
   }
   
   
@@ -511,7 +511,7 @@ display(){
   let b= random(5,10);
 
  stroke(r-10,g-10,b-10);
-  fill(r,g,b,this.position.y/2.5);
+  fill(r,g,b,this.position.y/2.7);
 
 ellipse(this.position.x,this.position.y,4000,4000);
   

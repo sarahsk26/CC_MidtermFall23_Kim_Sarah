@@ -13,25 +13,40 @@
 
 //Perception of a Manichean World: in unison, the layering of these concepts helps me illustrate human's tendency to think dualistically (found in a variety of global ideologies and traditions)~ to envision the concept of light and dark, good and evil, complementing and opposing forces that balance eachother rather than to comprehend a spectrum/ the grey areas
 
+// the yin and yang symbol is an icon for duality so I included that in the second scene. 
+
+
 //references: The Coding Train on Arrays and Object Oriented Programming https://www.youtube.com/watch?v=H4awPsyugS0&list=PLRqwX-V7Uu6aAEUqu96Newc-7qpuh-cxc 
 
 // code from class(gravity ball in the middle)
+// code from class on Working with Time 
 
+// I used openai to produce the accuracy in form to the yin yang symbol (the arcs and curves)
 
+// establishing global variables 
 
-
-
-let rains= [];
+let rains= []; // arrays and variables for the classes 
 let clouds=[];
 let trees=[];
 let waves=[];
 let moon;
 let sun;
 
+let scene1_;
+let scene2_;
+
+let angle = 0;
+let rotationSpeed = 0.005;
+
+
 
 
 function setup(){ // SETUP FUNCTION
   createCanvas(800,800);
+  
+  scene1_ = true;
+  scene2_ = false;
+  
   
   for(let i=0; i<1000; i++){ // conditions for the rain instance 
       let x= random(width/2);
@@ -56,7 +71,7 @@ let t= new Tree(width/2,height);
   trees.push(t);
 } 
  
-for(let i=0; i<2000; i++){ // wave blood cell
+for(let i=0; i<500; i++){ // wave blood cell
  
   let x= random(5);
   let y= random(height/2-2,height/2+2);
@@ -68,9 +83,9 @@ for(let i=0; i<2000; i++){ // wave blood cell
  
   mover= new Mover(); // vector instance 
   
-  moon= new Moon();
+  moon= new Moon(); // vector instance of the moon
   
-  sun= new Sun();
+  sun= new Sun();// vector instance of the sun
   
   
 }
@@ -79,8 +94,29 @@ for(let i=0; i<2000; i++){ // wave blood cell
 //DRAW 
 
 
+
 function draw(){ //BEGINNING OF THE DRAW LOOP FUNCTION 
   
+  background(0);
+
+   if(frameCount < 470){ // scene 1 is up to framecount 470
+     scene1(); 
+  } else if (frameCount < 800){ // scene 2 is up to framcount 800
+    scene2();
+  } 
+  if (frameCount>800){// once framecount exceeds 800, it returns to 0 and the sequence repeats
+    frameCount= 0;
+  }
+ print(frameCount);  // printing the framecount for reference 
+}
+
+//end of draw loop!!!~!!!!!!!!@@@#$@$^
+
+
+
+
+function scene1(){ // scene 1 code 
+ 
   let b= random(30); // background color (left half)
   background(b);
   
@@ -105,8 +141,6 @@ function draw(){ //BEGINNING OF THE DRAW LOOP FUNCTION
   }
   
   
-
-  
   
   for(var i=0; i<rains.length;i++){
   rains[i].exist(); // the functions of rain
@@ -127,36 +161,77 @@ function draw(){ //BEGINNING OF THE DRAW LOOP FUNCTION
   
   ellipseMode(CENTER);
 
-let gravity = createVector(0,0.1); // vector instance for the middle mover gravity ball 
-  mover.applyForce(gravity); 
-  mover.display();
-  mover.checkEdges();
-  mover.update();
+let gravity = createVector(0,0.1); // vector instance for the middle mover gravity ball and calling its functions 
+  mover.applyForce(gravity);   
+  mover.display(); 
+  mover.checkEdges(); 
+  mover.update(); 
   
-// vector instance for the moon movement 
+// vector instance for the moon movement and calling its functions 
 moon.applyForce(gravity);
 moon.display();
 moon.checkEdges();
 moon.update();
   
-//vector instance for the sun movement 
+//vector instance for the sun movement and calling its functions 
 sun.applyForce(gravity);
 sun.display();
 sun.checkEdges();
 sun.update();
  
   
- for(var i=0; i<waves.length;i++){
+ for(var i=0; i<waves.length;i++){ // calling the wave of bloodcells and its functions 
     waves[i].exist(); // functions waves exist 
     waves[i].move();
   }  
     
- eye();  
+ eye();  // calling the function of the eye cursor 
+
+}
+ // end of scene 1 code 
+
+
+
+function scene2(){
+  
+ let diameter = 400;
+  let centerX = width / 2;
+  let centerY = height / 2;
+
+  let r =random(30,200);
+  background(r);
+
+  
+  push(); // translating and rotating the yin yang 
+  translate(centerX, centerY);
+  rotate(angle);
+
+  
+  fill(255);// drawing the white part of the circle 
+noStroke();
+  ellipse(0, 0, diameter, diameter);
+
+  // drawing the black part of the circle 
+  fill(0);
+  arc(0, 0, diameter, diameter, PI / 2, 3 * PI / 2);
+
+  //drawigng the small white circle
+  fill(255);
+  ellipse(0, -diameter / 4, diameter / 2, diameter / 2);
+
+  // drawing the small black circle
+  fill(0);
+  ellipse(0, diameter / 4, diameter / 2, diameter / 2);
+
+  pop();// pop!
+ 
+  angle += rotationSpeed; // adding rotation 
 }
 
+function mousePressed(){
+  currentTime = millis(); // returns the millis seconds that the code has been running
 
-//end of draw loop!!!~!!!!!!!!@@@#$@$^
-
+}
 
 
 
@@ -486,7 +561,7 @@ class Mover{  // MOVER CLASS AND QUALITIES (BALL)--> GRAVITY
     this.position= new createVector(width/2,30); // spefici coordinates
     this.velocity= new createVector(0,0);
     this.acceleration= new createVector(0,0);
-    this.mass= 1;
+    this.mass= 2;
   }
   
   
@@ -511,13 +586,14 @@ display(){
   let b= random(5,10);
 
  stroke(r-10,g-10,b-10);
-  fill(r,g,b,this.position.y/2.7);
+  fill(r,g,b,this.position.y/2.8);
 
 ellipse(this.position.x,this.position.y,4000,4000);
   
   fill(0,this.position.y/2);
   noStroke();
   ellipse(this.position.x,this.position.y,30,30);
+  
 }
   
   
@@ -639,4 +715,3 @@ if(this.position.y<0){
 } // end of check edges method
   
 }// end of class 
-
